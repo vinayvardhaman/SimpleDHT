@@ -1,14 +1,8 @@
 # SimpleDHT
-Implemented total ordering across messenger instances that preserves FIFO ordering
+This project focuses on implementing Distributed Hash Table, shortly called DHT using Chord ring based routing. It is a simplified version of Chord.
 
-This project will focus on: • Implementing a FIFO total ordering algorithm. • Detect and handle failure of a single messenger instance.
+In this project the following things are implemented • ID space partitioning and re-partitioning • Ring-based routing • Handle node joins to a DHT containing data
 
-The app provides a total ordering guarantee for incoming messages among all app instances and that total ordering preserves FIFO ordering (total-FIFO ordering).
+The content provider implements ring-based routing (not Chord finger routing or finger tables). Following the Chord ring design, the content provider maintains predecessor and successor pointers, then forward each request for data not stored locally to its successor until the request arrives at the correct node. When a node receives a request for an ID that it maintains, it processes the request and sends the result to the content provider instance initiating the request.
 
-The app uses Basic multicast. It does not implement Reliable multicast.
-
-The project implements modified ISIS algorithm to provide total-FIFO ordering under a single process failure. It can handle at most one failure of an app instance during execution. Also, we are implementing a decentralized algorithm.
-
-Every app instance cleans up the state related to a failed node and then moves on.
-
-Every message is stored in the content provider on the local device individually by each app instance. Each message is stored as a key-value pair, with the key being the final delivery sequence number for the message (as a Java string) and the value being the actual message (as a Java string). The delivery sequence number for this purpose starts with 0 and increases by 1 for each message.
+The content provider also handles node joins. For this functionality, the emulator instance emulator-5554 receives all new node join requests. and start the content provider on emulator-5554 first to enable this. upon completing a new node join request, affected nodes update their predecessor and successor pointers correctly.
